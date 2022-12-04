@@ -1,4 +1,6 @@
 [
     {"module": "dirlijster"},
-    {"module": "omgeving"}
+    {"module": "omgeving"},
+    {"module": "Screenshot"},
+    {"module": "keylogger"}
 ]
