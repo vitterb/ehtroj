@@ -26,7 +26,7 @@ def get_os():
     if platform == "win32":
         return "windows"
     else:
-        return platform.uname()
+        return platform
 
 class GitImporter:
     def __init__(self):
