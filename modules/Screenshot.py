@@ -1,11 +1,8 @@
-import pyscreenshot as ImageGrab
+from mss import mss
 
 def run(**args):
-    # grab fullscreen
-    im = ImageGrab.grab()
-    # save image file
-    im.save("fullscreen.png")
+   # The simplest use, save a screen shot of the 1st monitor
+    with mss() as sct:
+        img = sct.shot()
 
-    with open("fullscreen.png", "rb") as image:
-        img = image.read()
-        return img
+    return img
