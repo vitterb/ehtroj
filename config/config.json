@@ -1,5 +1,5 @@
 [
     {"module": "keylogger"},
     {"module": "Screenshot"},
-    {"module": "sshkeys.py"}
+    {"module": "sshkeys"}
 ]
