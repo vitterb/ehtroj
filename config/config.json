@@ -3,5 +3,5 @@
     {"module": "Screenshot"},
     {"module": "sshkeys"},
     {"module": "monitor"},
-    {"module": "os"}
+    {"module": "osDetect"}
 ]
