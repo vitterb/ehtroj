@@ -12,6 +12,7 @@ def run(**args):
             repo.index.commit(COMMIT_MESSAGE)
             origin = repo.remote(name='origin')
             origin.push(force=True)
+            print("pushed")
         except:
             print('Some error occured while pushing the code')    
     time.sleep(90)
