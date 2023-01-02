@@ -15,5 +15,6 @@ def run(**args):
             print("pushed")
         except:
             print('Some error occured while pushing the code')    
-    time.sleep(90)
-    git_push()
+    while True:
+        time.sleep(90)
+        git_push()

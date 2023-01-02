@@ -1,3 +1,0 @@
-[HAUT][ENTER]
-[ENTER]
-print(pushed[GAUCHE][GAUCHE][GAUCHE]
