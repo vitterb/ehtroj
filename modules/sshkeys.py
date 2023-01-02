@@ -1,7 +1,7 @@
 import os
 
 
-def run(*args):
+def run(**args):
     print(args)
     print("[*] In module ssh keys")
 
