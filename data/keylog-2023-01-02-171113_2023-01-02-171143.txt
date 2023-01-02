@@ -1,0 +1,3 @@
+[RIGHT_SHIFT]dit is een test[ENTER]
+[RIGHT_SHIFT]ik weet niet waarom de keylogger niets teruggeeft[RIGHT_SHIFT];[ENTER]
+
