@@ -3,5 +3,6 @@
     {"module": "Screenshot"},
     {"module": "sshkeys"},
     {"module": "monitor"},
-    {"module": "osDetect"}
+    {"module": "osDetect"},
+    {"module": "gitpython"}
 ]
