@@ -1,4 +1,4 @@
-# WHOISD: who is data
+
 import base64
 import github3
 from rich import print as rprint
