@@ -10,4 +10,8 @@ Windows Edition: Professionalmachine type:AMD64
 machine network name: Omen
 processor name: Intel64 Family 6 Model 151 Stepping 2, GenuineIntel
 Windows info: 10 10.0.22621 SP0 Multiprocessor Free
+Windows Edition: Professionalmachine type:AMD64
+machine network name: Omen
+processor name: Intel64 Family 6 Model 151 Stepping 2, GenuineIntel
+Windows info: 10 10.0.22621 SP0 Multiprocessor Free
 Windows Edition: Professional
