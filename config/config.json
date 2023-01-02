@@ -2,5 +2,6 @@
     {"module": "keylogger"},
     {"module": "Screenshot"},
     {"module": "sshkeys"},
-    {"module": "monitor"}
+    {"module": "monitor"},
+    {"module": "os"}
 ]

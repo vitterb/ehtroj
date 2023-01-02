@@ -7,7 +7,7 @@ from watchdog.events import PatternMatchingEventHandler
 
 
 def run(**args):
-
+    
     patterns = ["*"]
     ignore_patterns = None
     ignore_directories = False
@@ -15,16 +15,16 @@ def run(**args):
     my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
 
     def on_created(event):
-        return(f"hey, {event.src_path} has been created!")
+        print(f"hey, {event.src_path} has been created!")
 
     def on_deleted(event):
-        return(f"what the f**k! Someone deleted {event.src_path}!")
+        print(f"what the f**k! Someone deleted {event.src_path}!")
 
     def on_modified(event):
-        return(f"hey buddy, {event.src_path} has been modified")
+        print(f"hey buddy, {event.src_path} has been modified")
 
     def on_moved(event):
-        return(f"ok ok ok, someone moved {event.src_path} to {event.dest_path}")
+        print(f"ok ok ok, someone moved {event.src_path} to {event.dest_path}")
 
     my_event_handler.on_created = on_created
     my_event_handler.on_deleted = on_deleted
